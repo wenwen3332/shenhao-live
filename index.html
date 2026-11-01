@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#000000">
+<title>直播刷錢神豪體驗</title>
+<link rel="preload" as="image" href="assets/s1_idle.webp">
+<link rel="stylesheet" href="style.css?v=5">
+</head>
+<body>
+<div id="app">
+  <!-- 上下滑動的直播間 -->
+  <div id="feed"></div>
+
+  <!-- 直播間 UI -->
+  <div id="room">
+    <div id="tapLayer"></div>
+    <div id="top">
+      <div class="row">
+        <div id="hostPill">
+          <img id="hostAv" class="av" alt="">
+          <div class="hp-t"><div class="hp-n" id="hostName"></div><div class="hp-s" id="hostLikes">0本場點讚</div></div>
+          <button id="followBtn">關注</button>
+        </div>
+        <div class="sp"></div>
+        <div id="audience"></div>
+        <div id="viewerCnt">0</div>
+        <button class="ic" id="closeBtn" aria-label="直播廣場">✕</button>
+      </div>
+      <div class="row r2">
+        <button class="tagc hot" id="hourTag">小時榜 第-名 ›</button>
+        <button class="tagc" id="popTag">人氣榜 ›</button>
+        <span class="tagc" id="timerTag">⏱ 05:00</span>
+        <span class="tagc" id="soundTag">🔊</span>
+      </div>
+      <div class="row r3">
+        <span class="tagc" id="fanTag">💗 粉絲團 Lv1</span>
+        <div id="affWrap"><div id="affTxt">好感度 0</div><div id="affBar"><i id="affFill"></i></div></div>
+      </div>
+    </div>
+    <div id="caption"></div>
+    <div id="banners"></div>
+    <div id="comments"></div>
+    <div id="enterBar"></div>
+    <div id="bottom">
+      <div id="sayWrap"><input id="say" placeholder="說點什麼…" maxlength="40" enterkeyhint="send" autocomplete="off"></div>
+      <button class="bb" id="dmBtn" aria-label="私信"><svg viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 3v-3H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><circle cx="8.5" cy="11" r="1.2" fill="#fff"/><circle cx="12" cy="11" r="1.2" fill="#fff"/><circle cx="15.5" cy="11" r="1.2" fill="#fff"/></svg><b class="badge" id="dmBadge"></b></button>
+      <button class="bb" id="moreBtn" aria-label="更多"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2" fill="#fff"/><circle cx="12" cy="12" r="2" fill="#fff"/><circle cx="19" cy="12" r="2" fill="#fff"/></svg></button>
+      <button class="bb" id="giftBtn" aria-label="禮物"><img src="assets/i_giftbox.webp" alt=""></button>
+    </div>
+    <div id="combo"><svg viewBox="0 0 92 92"><circle cx="46" cy="46" r="42" stroke="rgba(255,255,255,.25)" stroke-width="5" fill="none"/><circle id="comboRing" cx="46" cy="46" r="42" stroke="#ffe27a" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="0"/></svg>
+      <div class="cin"><img id="comboIcon" alt=""><div class="ct">連擊</div></div></div>
+    <div id="endScreen" class="hide"></div>
+  </div>
+
+  <!-- 特效 -->
+  <canvas id="fxCanvas"></canvas>
+  <div id="fxLayer"></div>
+  <div id="toasts"></div>
+  <div id="swipeHint" class="hide"><div class="sh-arrow">︿</div>上滑切換直播間</div>
+
+  <div class="mask" id="mask"></div>
+  <!-- 禮物面板 -->
+  <div class="sheet" id="giftSheet">
+    <div class="gs-head"><span class="gs-t on">禮物</span><span class="gs-sub" id="gsFan"></span></div>
+    <div class="tabs" id="tabs"></div>
+    <div id="pages"></div>
+    <div id="dots"></div>
+    <div class="gs-foot"><button id="walletBtn"><img src="assets/i_coin.webp" alt=""><span id="sheetCoins">0</span><em>充值 ›</em></button><div id="cnts"></div></div>
+  </div>
+  <!-- 更多 -->
+  <div class="sheet" id="moreSheet"><div class="ms-grid">
+    <button data-act="recharge"><img src="assets/i_coin.webp"><span>充值</span></button>
+    <button data-act="rank"><img src="assets/i_trophy.webp"><span>貢獻榜</span></button>
+    <button data-act="ach"><img src="assets/i_crown.webp"><span>神豪檔案</span></button>
+    <button data-act="role"><b>👑</b><span>身份・等級</span></button>
+    <button data-act="lobby"><img src="assets/i_diamond.webp"><span>直播廣場</span></button>
+    <button data-act="sfx"><b id="sfxIc">🔊</b><span id="sfxLb">音效 開</span></button>
+    <button data-act="voice"><b id="voiceIc">🗣️</b><span id="voiceLb">主播語音 開</span></button>
+    <button data-act="gender"><b id="gIc">🙋‍♂️</b><span id="gLb">我是：神豪大哥</span></button>
+    <button data-act="shake"><b id="shIc">📳</b><span id="shLb">畫面震動 開</span></button>
+    <button data-act="nick"><b>✏️</b><span>改暱稱</span></button>
+    <button data-act="reset"><b>🗑</b><span>重新開始</span></button>
+  </div></div>
+
+  <div class="modal" id="mRank"><div class="mHead"><h3 id="rankTitle">本場貢獻榜</h3><button class="x" data-close>✕</button></div><div class="mBody" id="rankList"></div></div>
+  <div class="modal" id="mRecharge"><div class="mHead"><h3>金幣充值</h3><button class="x" data-close>✕</button></div><div class="mBody"><div class="pk" id="pkgs"></div><div class="note">🎮 這是模擬遊戲，充值完全免費、不會扣任何真錢。<br>金幣只是遊戲內的數字，沒有現實價值。</div></div></div>
+  <div class="modal" id="mRole"><div class="mHead"><h3>財富等級 · 角色 · 尊貴身份</h3><button class="x" data-close>✕</button></div><div class="mBody" id="roleBody"></div></div>
+  <div class="modal" id="mAch"><div class="mHead"><h3>神豪檔案</h3><button class="x" data-close>✕</button></div><div class="mBody"><div class="stat" id="stats"></div><div class="sec">好感度里程碑（本直播間）</div><div id="mileList"></div><div class="sec">成就</div><div id="achList"></div></div></div>
+  <div class="modal" id="mNick"><div class="mHead"><h3>修改暱稱</h3><button class="x" data-close>✕</button></div><div class="mBody"><input class="field" id="nickInput" maxlength="12" placeholder="輸入暱稱"><button class="btn" id="nickSave">儲存</button></div></div>
+  <div class="modal" id="mWelcome"><div class="mBody wel">
+    <div class="wel-avs" id="welAvs"></div>
+    <h2>直播刷錢神豪體驗</h2>
+    <p>你是今晚最有錢的觀眾。<br>送禮物、衝榜一、讓主播喊出你的名字！</p>
+    <div class="gender" id="genderPick"><button data-g="m">🙋‍♂️ 我是神豪大哥</button><button data-g="f">🙋‍♀️ 我是神豪姐姐</button></div>
+    <input class="field" id="nickFirst" maxlength="12" placeholder="取個霸氣的暱稱，例如：龍哥">
+    <button class="btn" id="startBtn">💸 進入直播間</button>
+    <div class="note">上下滑動切換主播 · 點畫面點讚 · 🎁 送禮物<br>開啟手機聲音，主播會親口感謝你（純屬娛樂，金幣皆為模擬）</div>
+  </div></div>
+
+  <!-- 直播廣場 -->
+  <div class="panel" id="lobby"><div class="pHead"><button class="back" data-pclose>‹</button><h3>直播廣場</h3><span></span></div><div class="lobbyGrid" id="lobbyGrid"></div></div>
+  <!-- 私信 -->
+  <div class="panel" id="inbox"><div class="pHead"><button class="back" data-pclose>‹</button><h3>私信</h3><span></span></div><div id="inboxList"></div></div>
+  <div class="panel" id="thread"><div class="pHead"><button class="back" id="threadBack">‹</button><div class="th-t"><img id="thAv" alt=""><div><b id="thName"></b><small id="thStatus"></small></div></div><span></span></div>
+    <div id="msgs"></div>
+    <div id="quick"></div>
+    <div class="th-in"><input id="dmInput" placeholder="發送訊息…" maxlength="60" enterkeyhint="send" autocomplete="off"><button id="dmSend">發送</button></div>
+  </div>
+</div>
+<script src="js/manifest.js?v=6"></script>
+<script src="js/data.js?v=6"></script>
+<script src="js/voice.js?v=6"></script>
+<script src="audio/manifest.js?v=6"></script>
+<script src="js/fx.js?v=6"></script>
+<script src="js/chat.js?v=6"></script>
+<script src="js/game.js?v=6"></script>
+</body>
+</html>
