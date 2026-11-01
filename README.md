@@ -6,4 +6,7 @@
 - 主播語音為預先產生的神經語音（`audio/`），不會念出你的暱稱，以通用稱呼（大哥／姐姐…）代替。
 - 進度存於瀏覽器 localStorage。
 
-線上遊玩：https://yuchen121.github.io/shenhao-live/
+線上遊玩：https://wenwen3332.github.io/shenhao-live/
+
+### 想讓主播念出暱稱？
+若有在跑附帶的語音伺服器（`server.py`，提供 `/tts`），開啟 `https://wenwen3332.github.io/shenhao-live/?tts=<伺服器網址>` 即可改用即時語音（會記住；`?tts=off` 關閉）。伺服器不在時自動退回預錄音檔。
